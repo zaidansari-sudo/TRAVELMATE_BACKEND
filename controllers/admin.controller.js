@@ -39,20 +39,47 @@ export const updateBookingStatus = async (req, res) => {
       return res.status(400).json({ message: "Invalid status value" });
     }
 
+    // 🔍 Get existing booking
+    const existing = await prisma.booking.findUnique({
+      where: { id: bookingId },
+    });
+
+    if (!existing) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
+    // 🚫 If same status, skip update
+    if (existing.status === status) {
+      return res.json({
+        message: "Status already set",
+        booking: existing,
+      });
+    }
+
+    // ✅ Update booking
     const booking = await prisma.booking.update({
       where: { id: bookingId },
       data: { status },
     });
 
-    if (status === "Confirmed") {
-      await sendEmail.confirmationEmail(booking);
+    // 📧 Send emails safely
+    try {
+      if (existing.status !== "Confirmed" && status === "Confirmed") {
+        await sendEmail.confirmationEmail(booking);
+      }
+
+      if (existing.status !== "Cancelled" && status === "Cancelled") {
+        await sendEmail.cancellationEmail(booking);
+      }
+    } catch (err) {
+      console.log("Email failed:", err.message);
     }
 
-    if (status === "Cancelled") {
-      await sendEmail.cancellationEmail(booking);
-    }
-
-    res.json({ message: "Status updated", booking });
+    // ✅ Response (IMPORTANT)
+    res.json({
+      message: "Status updated successfully",
+      booking,
+    });
 
   } catch (error) {
     res.status(500).json({ message: error.message });

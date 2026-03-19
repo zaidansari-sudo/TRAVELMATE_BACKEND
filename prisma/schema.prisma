@@ -31,7 +31,7 @@ model User {
 
 model Booking {
   id        Int           @id @default(autoincrement())
-  bookingCode String?       @unique
+  bookingCode String       @unique
   userId    Int
   name      String
   email     String
@@ -44,4 +44,8 @@ model Booking {
   createdAt DateTime      @default(now())
 
   user      User @relation(fields: [userId], references: [id])
+
+  @@index([status])
+  @@index([startDate])
+  
 }

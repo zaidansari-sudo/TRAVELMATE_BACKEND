@@ -1,5 +1,6 @@
 import sendEmail from "../utils/sendEmail.js";
 import { PrismaClient } from "@prisma/client";
+import { v4 as uuidv4 } from "uuid";
 
 const prisma = new PrismaClient();
 
@@ -7,19 +8,7 @@ export const createBooking = async (req, res) => {
   try {
     const { name, email, phone, travelers, tripTitle, price, startDate } = req.body;
 
-    const year = new Date().getFullYear();
-
-    // Count bookings this year
-    const count = await prisma.booking.count({
-      where: {
-        createdAt: {
-          gte: new Date(`${year}-01-01`),
-          lt: new Date(`${year + 1}-01-01`),
-        },
-      },
-    });
-
-    const bookingCode = `TM-${year}-${String(count + 1).padStart(4, "0")}`;
+    const bookingCode = `TM-${uuidv4().slice(0, 8).toUpperCase()}`;
 
     const booking = await prisma.booking.create({
       data: {
@@ -35,7 +24,11 @@ export const createBooking = async (req, res) => {
       },
     });
 
-    await sendEmail.bookingReceivedEmail(booking);
+    try {
+      await sendEmail.bookingReceivedEmail(booking);
+    } catch (err) {
+      console.log("Email failed:", err.message);
+    }
 
     res.status(201).json({
       success: true,
