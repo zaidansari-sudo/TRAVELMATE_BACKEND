@@ -10,13 +10,15 @@ dotenv.config();
 
 const app = express();
 
-// ✅ Render + Vercel + localhost
+// ✅ FIXED CORS (important)
 app.use(cors({
   origin: [
     "http://localhost:3000",
     "https://travelmate-frontend-teal.vercel.app"
   ],
-  credentials: true
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
 app.use(express.json());
@@ -30,7 +32,6 @@ app.get("/", (req, res) => {
   res.send("TravelMate Backend Running...");
 });
 
-// ✅ IMPORTANT for Render
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
