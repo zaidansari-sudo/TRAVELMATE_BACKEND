@@ -10,11 +10,12 @@ dotenv.config();
 
 const app = express();
 
-// ✅ Simple working CORS
+// ✅ Render + Vercel + localhost
 app.use(cors({
   origin: [
     "http://localhost:3000",
-    "https://travelmatefrontend-production.up.railway.app"
+    "https://travelmate-frontend-teal.vercel.app",
+    /\.vercel\.app$/
   ],
   credentials: true
 }));
@@ -30,9 +31,11 @@ app.get("/", (req, res) => {
   res.send("TravelMate Backend Running...");
 });
 
+// ✅ IMPORTANT for Render
 const PORT = process.env.PORT || 5000;
+
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
 
 startBookingCron();
