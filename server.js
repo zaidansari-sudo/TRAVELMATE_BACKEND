@@ -14,8 +14,7 @@ const app = express();
 app.use(cors({
   origin: [
     "http://localhost:3000",
-    "https://travelmate-frontend-teal.vercel.app",
-    /\.vercel\.app$/
+    "https://travelmate-frontend-teal.vercel.app"
   ],
   credentials: true
 }));
