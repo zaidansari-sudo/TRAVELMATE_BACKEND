@@ -57,3 +57,22 @@ export const getMyBookings = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+export const getBookingByCode = async (req, res) => {
+  try {
+    const { code } = req.params;
+
+    const booking = await prisma.booking.findUnique({
+      where: {
+        bookingCode: code,
+      },
+    });
+
+    if (!booking) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+
+    res.json(booking);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
