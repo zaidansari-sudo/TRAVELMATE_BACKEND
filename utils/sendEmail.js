@@ -87,13 +87,6 @@ const confirmationEmail = async (booking) => {
         : "To be announced"
     }</p>
 
-    <div style="margin-top: 20px; text-align: center;">
-      <a href="https://travelmatefrontend-production.up.railway.app/booking/${booking.bookingCode}" 
-style="background: #2563eb; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
-View Your Booking
-</a>
-    </div>
-
     <p style="margin-top: 20px; font-size: 13px; color: #555;">
       Need help? Contact us at support@travelmate.com
     </p>
